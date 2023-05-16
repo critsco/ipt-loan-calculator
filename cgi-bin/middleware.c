@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <jansson.h>
+#include <math.h>
 
 double calculate_monthly_payment(double principal, double rate, int months) {
     double monthly_rate = rate / 1200;
@@ -30,3 +31,4 @@ int main() {
 
     return 0;
 }
+
