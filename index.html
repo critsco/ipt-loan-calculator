@@ -44,7 +44,7 @@
             <option value="6">6 months</option>
         </select><br>
         <label for="interestRate">Interest Rate:</label>
-        <input type="text" id="interestRate" name="interestRate" pattern="\d+(\.\d{1,2})?%" required><br>
+        <input type="number" id="interestRate" name="interestRate" step="0.01" required><br>
         <input type="submit" value="Calculate Amortization">
     </form>
     <div id="result"></div>
