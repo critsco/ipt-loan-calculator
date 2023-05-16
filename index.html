@@ -1,70 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Loan Calculator</title>
-	</head>
-	<body>
-		<h1>Loan Calculator</h1>
-		<form action="/cgi-bin/middlware.o" method="POST">
-			<label for="principal">Principal:</label>
-			<input type="number" id="principal" name="principal" required />
-			<br />
-			<label for="rate">Annual Interest Rate (%):</label>
-			<input type="number" id="rate" name="rate" step="0.01" required />
-			<br />
-			<label for="months">Loan Term (Months):</label>
-			<select id="months" name="months" required>
-				<option value="">Select a term</option>
-				<option value="1">1 month</option>
-				<option value="2">2 months</option>
-				<option value="3">3 months</option>
-				<option value="4">4 months</option>
-				<option value="5">5 months</option>
-				<option value="6">6 months</option>
-				<option value="7">7 months</option>
-				<option value="8">8 months</option>
-				<option value="9">9 months</option>
-				<option value="10">10 months</option>
-				<option value="11">11 months</option>
-				<option value="12">12 months</option>
-				<option value="13">13 months</option>
-				<option value="14">14 months</option>
-				<option value="15">15 months</option>
-				<option value="16">16 months</option>
-				<option value="17">17 months</option>
-				<option value="18">18 months</option>
-				<option value="19">19 months</option>
-				<option value="20">20 months</option>
-				<option value="21">21 months</option>
-				<option value="22">22 months</option>
-				<option value="23">23 months</option>
-				<option value="24">24 months</option>
-			</select>
-			<br />
-			<input type="submit" value="Calculate" />
-		</form>
-		<div id="result"></div>
-		<script>
-			document
-				.querySelector("form")
-				.addEventListener("submit", async (event) => {
-					event.preventDefault();
+<html>
+<head>
+    <title>Loan Calculator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function calculateAmortization(event) {
+            event.preventDefault();
 
-					const formData = new FormData(event.target);
-					const response = await fetch("/cgi-bin/middleware.o", {
-						method: "POST",
-						body: formData,
-					});
+            const loanAmount = document.getElementById('loanAmount').value;
+            const term = document.getElementById('term').value;
+            const interestRate = document.getElementById('interestRate').value;
 
-					const result = await response.json();
-					document.getElementById(
-						"result"
-					).textContent = `Monthly Payment: ${result.monthly_payment.toFixed(
-						2
-					)}`;
-				});
-		</script>
-	</body>
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/cgi-bin/middleware.o', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const amortization = JSON.parse(xhr.responseText);
+                    const table = $('<table>').append($('<thead>').append($('<tr>').append($('<th>').text('Payment No.')).append($('<th>').text('Principle Payable')).append($('<th>').text('Interest Payable')).append($('<th>').text('Total Amortization')).append($('<th>').text('Interest Rate')))).append($('<tbody>'));
+                    for (let i = 0; i < amortization.length; i++) {
+                        const row = $('<tr>').append($('<td>').text(amortization[i].paymentNo)).append($('<td>').text(amortization[i].principlePayable)).append($('<td>').text(amortization[i].interestPayable)).append($('<td>').text(amortization[i].totalAmortization)).append($('<td>').text(amortization[i].interestRate));
+                        table.append(row);
+                    }
+                    $('#result').empty().append(table);
+                }
+            };
+            xhr.send(JSON.stringify({loanAmount: loanAmount, term: term, interestRate: interestRate}));
+        }
+    </script>
+</head>
+<body>
+    <h1>Loan Calculator</h1>
+    <form onsubmit="calculateAmortization(event)">
+        <label for="loanAmount">Loan Amount:</label>
+        <input type="number" id="loanAmount" name="loanAmount" required><br>
+        <label for="term">Term (Months):</label>
+        <select id="term" name="term">
+            <option value="1">1 month</option>
+            <option value="2">2 months</option>
+            <option value="3">3 months</option>
+            <option value="4">4 months</option>
+            <option value="5">5 months</option>
+            <option value="6">6 months</option>
+        </select><br>
+        <label for="interestRate">Interest Rate:</label>
+        <input type="text" id="interestRate" name="interestRate" pattern="\d+(\.\d{1,2})?%" required><br>
+        <input type="submit" value="Calculate Amortization">
+    </form>
+    <div id="result"></div>
+</body>
 </html>
