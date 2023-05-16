@@ -7,19 +7,64 @@
 	</head>
 	<body>
 		<h1>Loan Calculator</h1>
-		<form action="/calculate" method="POST">
+		<form action="/cgi-bin/middlware.o" method="POST">
 			<label for="principal">Principal:</label>
 			<input type="number" id="principal" name="principal" required />
 			<br />
 			<label for="rate">Annual Interest Rate (%):</label>
 			<input type="number" id="rate" name="rate" step="0.01" required />
 			<br />
-			<label for="years">Loan Term (Years):</label>
-			<input type="number" id="years" name="years" required />
+			<label for="months">Loan Term (Months):</label>
+			<select id="months" name="months" required>
+				<option value="">Select a term</option>
+				<option value="1">1 month</option>
+				<option value="2">2 months</option>
+				<option value="3">3 months</option>
+				<option value="4">4 months</option>
+				<option value="5">5 months</option>
+				<option value="6">6 months</option>
+				<option value="7">7 months</option>
+				<option value="8">8 months</option>
+				<option value="9">9 months</option>
+				<option value="10">10 months</option>
+				<option value="11">11 months</option>
+				<option value="12">12 months</option>
+				<option value="13">13 months</option>
+				<option value="14">14 months</option>
+				<option value="15">15 months</option>
+				<option value="16">16 months</option>
+				<option value="17">17 months</option>
+				<option value="18">18 months</option>
+				<option value="19">19 months</option>
+				<option value="20">20 months</option>
+				<option value="21">21 months</option>
+				<option value="22">22 months</option>
+				<option value="23">23 months</option>
+				<option value="24">24 months</option>
+			</select>
 			<br />
 			<input type="submit" value="Calculate" />
 		</form>
 		<div id="result"></div>
-		<script src="client.js"></script>
+		<script>
+			document
+				.querySelector("form")
+				.addEventListener("submit", async (event) => {
+					event.preventDefault();
+
+					const formData = new FormData(event.target);
+					const response = await fetch("/cgi-bin/middleware.o", {
+						method: "POST",
+						body: formData,
+					});
+
+					const result = await response.json();
+					document.getElementById(
+						"result"
+					).textContent = `Monthly Payment: ${result.monthly_payment.toFixed(
+						2
+					)}`;
+				});
+		</script>
 	</body>
 </html>
