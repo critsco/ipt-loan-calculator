@@ -3,50 +3,49 @@
 <head>
     <title>Loan Calculator</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function calculateAmortization(event) {
-            event.preventDefault();
-
-            const loanAmount = document.getElementById('loanAmount').value;
-            const term = document.getElementById('term').value;
-            const interestRate = document.getElementById('interestRate').value;
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'cgi-bin/middleware.o', true);
-            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    const amortization = JSON.parse(xhr.responseText);
-                    const table = $('<table>').append($('<thead>').append($('<tr>').append($('<th>').text('Payment No.')).append($('<th>').text('Principle Payable')).append($('<th>').text('Interest Payable')).append($('<th>').text('Total Amortization')).append($('<th>').text('Interest Rate')))).append($('<tbody>'));
-                    for (let i = 0; i < amortization.length; i++) {
-                        const row = $('<tr>').append($('<td>').text(amortization[i].paymentNo)).append($('<td>').text(amortization[i].principlePayable)).append($('<td>').text(amortization[i].interestPayable)).append($('<td>').text(amortization[i].totalAmortization)).append($('<td>').text(amortization[i].interestRate));
-                        table.append(row);
-                    }
-                    $('#result').empty().append(table);
-                }
-            };
-            xhr.send(JSON.stringify({loanAmount: loanAmount, term: term, interestRate: interestRate}));
-        }
-    </script>
 </head>
 <body>
     <h1>Loan Calculator</h1>
-    <form onsubmit="calculateAmortization(event)">
-        <label for="loanAmount">Loan Amount:</label>
-        <input type="number" id="loanAmount" name="loanAmount" required><br>
-        <label for="term">Term (Months):</label>
-        <select id="term" name="term">
-            <option value="1">1 month</option>
-            <option value="2">2 months</option>
-            <option value="3">3 months</option>
-            <option value="4">4 months</option>
-            <option value="5">5 months</option>
-            <option value="6">6 months</option>
-        </select><br>
-        <label for="interestRate">Interest Rate:</label>
-        <input type="number" id="interestRate" name="interestRate" step="0.01" required><br>
-        <input type="submit" value="Calculate Amortization">
+    <form id="loan-form">
+        <label for="principal">Principal:</label>
+        <input type="number" id="principal" step="0.01" required>
+        <br>
+        <label for="interest_rate">Interest Rate (%):</label>
+        <input type="number" id="interest_rate" step="0.01" required>
+        <br>
+        <label for="years">Years:</label>
+        <input type="number" id="years" required>
+        <br>
+        <button type="submit">Calculate</button>
     </form>
-    <div id="result"></div>
+    <div id="results"></div>
+		
+		<script>
+			// loan_calculator.js
+			$(document).ready(function() {
+					$('#loan-form').submit(function(event) {
+							event.preventDefault();
+
+							let principal = $('#principal').val();
+							let interest_rate = $('#interest_rate').val();
+							let years = $('#years').val();
+
+							$.ajax({
+									url: 'cgi-bin/loan_calculator_cgi',
+									data: {
+											principal: principal,
+											interest_rate: interest_rate,
+											years: years
+									},
+									dataType: 'json',
+									success: function(data) {
+											let results = `<p>Monthly Payment: ${data.monthly_payment.toFixed(2)}</p>
+																		<p>Total Payment: ${data.total_payment.toFixed(2)}</p>`;
+											$('#results').html(results);
+									}
+							});
+					});
+			});
+		</script>
 </body>
 </html>
