@@ -7,45 +7,47 @@
 <body>
     <h1>Loan Calculator</h1>
     <form id="loan-form">
-        <label for="principal">Principal:</label>
-        <input type="number" id="principal" step="0.01" required>
+        <label for="loan-amount">Loan Amount:</label>
+        <input type="number" id="loan-amount" name="loan-amount" required>
         <br>
-        <label for="interest_rate">Interest Rate (%):</label>
-        <input type="number" id="interest_rate" step="0.01" required>
+        <label for="interest-rate">Interest:</label>
+        <input type="number" id="interest-rate" name="interest-rate" required>
         <br>
-        <label for="years">Years:</label>
-        <input type="number" id="years" required>
+        <label for="loan-term">Loan Term:</label>
+        <input type="number" id="loan-term" name="loan-term" required>
         <br>
         <button type="submit">Calculate</button>
-    </form>
-    <div id="results"></div>
-		
-		<script>
-			// loan_calculator.js
-			$(document).ready(function() {
-					$('#loan-form').submit(function(event) {
-							event.preventDefault();
+    </form>      
+    <div id="result">
+        <div>
+            <p>Monthly Payment: $<span id="monthly-payment"></span></p>
+            <p>Total Interest: $<span id="total-interest"></span></p>
+        </div>          
+    </div>
 
-							let principal = $('#principal').val();
-							let interest_rate = $('#interest_rate').val();
-							let years = $('#years').val();
-
-							$.ajax({
-									url: 'cgi-bin/loan_calculator_cgi',
-									data: {
-											principal: principal,
-											interest_rate: interest_rate,
-											years: years
-									},
-									dataType: 'json',
-									success: function(data) {
-											let results = `<p>Monthly Payment: ${data.monthly_payment.toFixed(2)}</p>
-																		<p>Total Payment: ${data.total_payment.toFixed(2)}</p>`;
-											$('#results').html(results);
-									}
-							});
-					});
-			});
-		</script>
+    <script>
+        $(document).ready(function() {
+        $('#loan-form').submit(function(event) {
+            event.preventDefault();
+            let loanAmount = $('#loan-amount').val();
+            let interestRate = $('#interest-rate').val();
+            let loanTerm = $('#loan-term').val();
+            $.ajax({
+            url: '/calculate-loan',
+            type: 'POST',
+            data: {
+                loanAmount: loanAmount,
+                interestRate: interestRate,
+                loanTerm: loanTerm
+            },
+            success: function(data) {
+                // Update the page with the calculated values
+                $('#monthly-payment').text(data.monthlyPayment.toFixed(2));
+                $('#total-interest').text(data.totalInterest.toFixed(2));
+            }
+            });
+        });
+        });
+    </script>
 </body>
 </html>
