@@ -1,53 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Loan Calculator</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.ico">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+    <title>Students Information</title>
 </head>
+
 <body>
-    <h1>Loan Calculator</h1>
-    <form id="loan-form">
-        <label for="loan-amount">Loan Amount:</label>
-        <input type="number" id="loan-amount" name="loan-amount" required>
-        <br>
-        <label for="interest-rate">Interest:</label>
-        <input type="number" id="interest-rate" name="interest-rate" required>
-        <br>
-        <label for="loan-term">Loan Term:</label>
-        <input type="number" id="loan-term" name="loan-term" required>
-        <br>
-        <button type="submit">Calculate</button>
-    </form>      
-    <div id="result">
+    <nav style="font-family: 'Josefin Sans', sans-serif;background: #131949;">
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo center">School Information System</a>
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li class="active"><a href="#">Students</a></li>
+                <li><a href="teachers.html">Teachers</a></li>
+            </ul>
+        </div>
+        <!-- <h1 class="navbar-title" style="margin: 0; padding: 0;left: 50%; top: 50%; position: absolute; text-align: center; transform: translate(-50%, -50%);font-size: 40px;font-family: 'Josefin Sans', sans-serif;">School Information System</h1> -->
+    </nav>
+
+    <div class="custom-container">
         <div>
-            <p>Monthly Payment: $<span id="monthly-payment"></span></p>
-            <p>Total Interest: $<span id="total-interest"></span></p>
-        </div>          
+            <form id="listrec" method="post" autocomplete="off">
+                <div class="input-field">
+                    <input type="text" name="name" id="name">
+                    <label for="search">Name</label>
+                </div>
+                <button class="btn waves-effect waves-light btn-small" id="search-btn">Search</button>
+                <button class="btn waves-effect waves-light btn-small" id="show-all">Show All</button>
+                <button class="btn waves-effect waves-light btn-small" id="add-btn">Add</button>
+                <button class="btn waves-effect waves-light btn-small" id="edit-btn">Update</button>
+                <button class="btn waves-effect waves-light btn-small" id="del-btn">Delete</button>
+            </form>
+        </div>
+
     </div>
 
-    <script>
-        $(document).ready(function() {
-        $('#loan-form').submit(function(event) {
-            event.preventDefault();
-            let loanAmount = $('#loan-amount').val();
-            let interestRate = $('#interest-rate').val();
-            let loanTerm = $('#loan-term').val();
-            $.ajax({
-            url: '/calculate-loan',
-            type: 'POST',
-            data: {
-                loanAmount: loanAmount,
-                interestRate: interestRate,
-                loanTerm: loanTerm
-            },
-            success: function(data) {
-                // Update the page with the calculated values
-                $('#monthly-payment').text(data.monthlyPayment.toFixed(2));
-                $('#total-interest').text(data.totalInterest.toFixed(2));
-            }
-            });
-        });
-        });
+    <div class="section">
+        <div class="row" id="lstcontainer">
+
+        </div>
+    </div>
+
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <h4>Add Student Info</h4>
+            <div class="row">
+                <form id="add-form" class="col 12 center-block">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="ID" type="text" name="a_id" id="a_id">
+                            <label for="a_id">ID</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Name" type="text" name="a_name" id="a_name">
+                            <label for="a_name">Name</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Sex" type="text" name="a_sex" id="a_sex">
+                            <label for="a_sex">Sex</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Contact #" type="text" name="a_contact" id="a_contact">
+                            <label for="a_contact">Contact #</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Address" type="text" name="a_address" id="a_address">
+                            <label for="a_address">Address</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Department" type="text" name="a_dept" id="a_dept">
+                            <label for="a_dept">Department</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Course" type="text" name="a_course" id="a_course">
+                            <label for="a_course">Course</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Year" type="text" name="a_year" id="a_year">
+                            <label for="a_year">Year Level</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Section" type="text" name="a_section" id="a_section">
+                            <label for="a_section">Section</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light" id="add">Add</button>
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h4>Edit Student Info</h4>
+            <div class="row">
+                <form id="edit-form" class="col 12 center-block">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="ID" type="text" name="e_id" id="e_id">
+                            <label for="e_id">ID</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Name" type="text" name="e_name" id="e_name">
+                            <label for="e_name">Name</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Sex" type="text" name="e_sex" id="e_sex">
+                            <label for="e_sex">Sex</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Contact #" type="text" name="e_contact" id="e_contact">
+                            <label for="e_contact">Contact #</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Address" type="text" name="e_address" id="e_address">
+                            <label for="e_address">Address</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Department" type="text" name="e_dept" id="e_dept">
+                            <label for="e_dept">Department</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input placeholder="Course" type="text" name="e_course" id="e_course">
+                            <label for="e_course">Course</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Year" type="text" name="e_year" id="e_year">
+                            <label for="e_year">Year Level</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input placeholder="Section" type="text" name="e_section" id="e_section">
+                            <label for="e_section">Section</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light" id="update-btn">Save</button>
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+        </div>
+    </div>
+
+    <script id="listitems" type="text/x-handlebars-template">
+        <div id="logslist">
+            <table class="custom-table">
+                <tr>
+                    <th class="custom-align">ID</th>
+                    <th class="custom-align">Name</th>
+                    <th class="custom-align">Sex</th>
+                    <th class="custom-align">Contact #</th>
+                    <th class="custom-align">Address</th>
+                    <th class="custom-align">Department</th>
+                    <th class="custom-align">Course</th>
+                    <th class="custom-align">Year Level</th>
+                    <th class="custom-align">Section</th>
+                </tr>
+            {{#each data}}
+                    <tr class="selectable-row" onclick="selectRow(this)" style="cursor: pointer">
+                        <td class="custom-align">{{s_id}}</td>
+                        <td class="custom-align">{{s_name}}</td>
+                        <td class="custom-align">{{s_sex}}</td>
+                        <td class="custom-align">{{s_contact}}</td>
+                        <td class="custom-align">{{s_address}}</td>
+                        <td class="custom-align">{{s_dept}}</td>
+                        <td class="custom-align">{{s_course}}</td>
+                        <td class="custom-align">{{s_year}}</td>
+                        <td class="custom-align">{{s_section}}</td>
+                    </tr>
+            {{/each}}
+        </table>
+            <br><a class="waves-effect waves-light btn-small" id="btnclear">clear</a>
+        </div>
     </script>
-</body>
-</html>
