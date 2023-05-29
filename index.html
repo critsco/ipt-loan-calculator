@@ -197,3 +197,221 @@
             <br><a class="waves-effect waves-light btn-small" id="btnclear">clear</a>
         </div>
     </script>
+
+    <script>
+        var selectedRow;
+
+        function selectRow(row) {
+            // Remove 'selected-row' class from all rows
+            var rows = document.querySelectorAll('.selectable-row');
+            rows.forEach(function (row) {
+                row.classList.remove('selected-row');
+            });
+
+            // Add 'selected-row' class to the clicked row
+            if (row) {
+                row.classList.add('selected-row');
+                selectedRow = row;
+
+                var selectedText = row.querySelector('.selected-row td').textContent;
+
+                // Perform operations with the selected value
+                console.log('Selected row value:', selectedText);
+            } else {
+                // Reset the selectedRow variable if no row is selected
+                selectedRow = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (event) {
+                var target = event.target;
+
+                // Check if the click event target is inside the table or not
+                var isInsideTable = target.closest('table');
+
+                // If the click is outside the table, remove the selected row
+                if (!isInsideTable) {
+                    selectRow(null);
+                } else {
+                    // Handle the case when the click is inside the table
+                    // Get the closest row element with the 'selectable-row' class
+                    var row = target.closest('.selectable-row');
+
+                    // Update the selectedRow variable with the current row
+                    selectedRow = row;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.modal').modal();
+
+            // Event handler for clicking the "Delete" button
+            $('#del-btn').click(function () {
+                event.preventDefault(); // Prevent the default form submission behavior
+                M.Toast.dismissAll();
+
+                var selectedText = $.trim($(selectedRow).find('.custom-align').eq(0).text());
+
+                if (selectedText === '') {
+                    var template = Handlebars.compile($("#listitems").html());
+                    // var html = template(response);
+
+                    // $("#lstcontainer").html(html);
+
+                    var toastHTML = '<i class="material-icons">error</i>&nbsp;<span> Nothing is selected.</span>';
+                    M.toast({ html: toastHTML, classes: 'rounded' });
+
+                    $('#btnclear').click(function (event) {
+                        event.preventDefault();
+                        $("#logslist").remove();
+                    });
+                } else {
+                    var rowData = [
+                        { name: 'selectedRow', value: $(selectedRow).find('.custom-align').eq(0).text() }
+                    ];
+
+                    console.log(JSON.stringify(rowData));
+
+                    // Perform AJAX request to fetch initial data
+                    $.ajax({
+                        url: 'cgi-bin/s_remove.o',
+                        type: 'POST',
+                        data: JSON.stringify(rowData),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function (response) {
+                            // Handle the response and display the initial data
+                            if (response.status === "success") {
+                                var formData = $("#listrec").serializeArray();
+
+                                console.log(response.message)
+
+                                // Perform AJAX request to fetch initial data
+                                $.ajax({
+                                    url: 'cgi-bin/s_show.o',
+                                    type: 'POST',
+                                    data: JSON.stringify(formData),
+                                    contentType: 'application/json',
+                                    dataType: 'json',
+                                    success: function (response) {
+                                        // Handle the response and display the initial data
+                                        if (response.status === "success") {
+                                            var template = Handlebars.compile($("#listitems").html());
+                                            var html = template(response);
+
+                                            $("#lstcontainer").html(html);
+
+                                            var toastHTML = '<i class="material-icons">remove_circle</i>&nbsp;<span> Record was removed.</span>';
+                                            M.toast({ html: toastHTML, classes: 'rounded' });
+
+                                            $('#btnclear').click(function (event) {
+                                                event.preventDefault();
+                                                $("#logslist").remove();
+                                            });
+
+                                        } else if (response.status === "error") {
+                                            console.log(response.message)
+                                            console.log(response.message_additional)
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.log(xhr.responseText);
+                                    }
+                                });
+
+                            } else if (response.status === "error") {
+                                console.log(response.message)
+                                console.log(response.message_additional)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+                }
+
+            });
+
+            // Event handler for clicking the "Add" button
+            $('#add-btn').click(function () {
+                event.preventDefault(); // Prevent the default form submission behavior
+
+                // Open the modal
+                $('#add-modal').modal('open');
+            });
+
+            $('#add').click(function (event) {
+                event.preventDefault();
+                M.Toast.dismissAll();
+
+                var addData = $("#add-form").serializeArray();
+
+                console.log(JSON.stringify(addData));
+
+                $.ajax({
+                    url: 'cgi-bin/s_add.o',
+                    type: 'POST',
+                    data: JSON.stringify(addData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (response) {
+                        // Handle the response and display the initial data
+
+                        if (response.status === "success") {
+                            // console.log(response.message)
+                            // console.log(response)
+                            var formData = $("#listrec").serializeArray();
+
+                            console.log(response.message)
+
+                            // Perform AJAX request to fetch initial data
+                            $.ajax({
+                                url: 'cgi-bin/s_show.o',
+                                type: 'POST',
+                                data: JSON.stringify(formData),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function (response) {
+                                    // Handle the response and display the initial data
+
+                                    if (response.status === "success") {
+                                        //console.log(response.message)
+                                        //console.log(response)
+
+                                        var template = Handlebars.compile($("#listitems").html());
+                                        var html = template(response);
+
+                                        $("#lstcontainer").html(html);
+
+                                        var toastHTML = '<i class="material-icons">check</i>&nbsp;<span> Record was added.</span>';
+                                        M.toast({ html: toastHTML, classes: 'rounded' });
+
+                                        $('#btnclear').click(function (event) {
+                                            event.preventDefault();
+                                            $("#logslist").remove();
+                                        });
+
+                                    } else if (response.status === "error") {
+                                        console.log(response.message)
+                                        console.log(response.message_additional)
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                }
+                            });
+
+                        } else if (response.status === "error") {
+                            console.log(response.message)
+                            console.log(response.message_additional)
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
