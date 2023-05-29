@@ -415,3 +415,213 @@
                     }
                 });
             });
+
+            // Event handler for clicking the "Edit" button
+            $('#edit-btn').click(function () {
+                event.preventDefault(); // Prevent the default form submission behavior
+
+                // Get the selected student's ID
+                var selectedId = $(selectedRow).find('.custom-align').eq(0).text();
+                var selectedName = $(selectedRow).find('.custom-align').eq(1).text();
+                var selectedSex = $(selectedRow).find('.custom-align').eq(2).text();
+                var selectedContact = $(selectedRow).find('.custom-align').eq(3).text();
+                var selectedAddress = $(selectedRow).find('.custom-align').eq(4).text();
+                var selectedDept = $(selectedRow).find('.custom-align').eq(5).text();
+                var selectedCourse = $(selectedRow).find('.custom-align').eq(6).text();
+                var selectedYear = $(selectedRow).find('.custom-align').eq(7).text();
+                var selectedSection = $(selectedRow).find('.custom-align').eq(8).text();
+
+                // Populate the ID input field in the modal
+                $('#e_id').val(selectedId);
+                $('#e_name').val(selectedName);
+                $('#e_sex').val(selectedSex);
+                $('#e_contact').val(selectedContact);
+                $('#e_address').val(selectedAddress);
+                $('#e_dept').val(selectedDept);
+                $('#e_course').val(selectedCourse);
+                $('#e_year').val(selectedYear);
+                $('#e_section').val(selectedSection);
+
+                // Open the modal
+                $('#edit-modal').modal('open');
+            });
+
+            $('#update-btn').click(function (event) {
+                event.preventDefault();
+                M.Toast.dismissAll();
+
+                var editData = $("#edit-form").serializeArray();
+
+                console.log(JSON.stringify(editData));
+
+                $.ajax({
+                    url: 'cgi-bin/s_update.o',
+                    type: 'POST',
+                    data: JSON.stringify(editData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (response) {
+                        // Handle the response and display the initial data
+
+                        if (response.status === "success") {
+                            // console.log(response.message)
+                            // console.log(response)
+                            var formData = $("#listrec").serializeArray();
+
+                            console.log(response.message)
+
+                            // Perform AJAX request to fetch initial data
+                            $.ajax({
+                                url: 'cgi-bin/s_show.o',
+                                type: 'POST',
+                                data: JSON.stringify(formData),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function (response) {
+                                    // Handle the response and display the initial data
+
+                                    if (response.status === "success") {
+                                        //console.log(response.message)
+                                        //console.log(response)
+
+                                        var template = Handlebars.compile($("#listitems").html());
+                                        var html = template(response);
+
+                                        $("#lstcontainer").html(html);
+
+                                        var toastHTML = '<i class="material-icons">check</i>&nbsp;<span> Record was updated.</span>';
+                                        M.toast({ html: toastHTML, classes: 'rounded' });
+
+                                        $('#btnclear').click(function (event) {
+                                            event.preventDefault();
+                                            $("#logslist").remove();
+                                        });
+
+                                    } else if (response.status === "error") {
+                                        console.log(response.message)
+                                        console.log(response.message_additional)
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                }
+                            });
+
+                        } else if (response.status === "error") {
+                            console.log(response.message)
+                            console.log(response.message_additional)
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+
+            // Event handler for clicking the "Show All" button
+            $('#show-all').click(function (event) {
+                event.preventDefault();
+                M.Toast.dismissAll();
+                // serialize form data
+                var formData = $("#listrec").serializeArray();
+
+                console.log(JSON.stringify(formData));
+
+                // Perform AJAX request to fetch initial data
+                $.ajax({
+                    url: 'cgi-bin/s_show.o',
+                    type: 'POST',
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (response) {
+                        // Handle the response and display the initial data
+
+                        if (response.status === "success") {
+                            //console.log(response.message)
+                            //console.log(response)
+                            if (response.data === "") {
+                                var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+                                M.toast({ html: toastHTML, classes: 'rounded' });
+                            } else {
+                                var template = Handlebars.compile($("#listitems").html());
+                                var html = template(response);
+
+                                $("#lstcontainer").html(html);
+
+                                var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+                                M.toast({ html: toastHTML, classes: 'rounded' });
+
+                                $('#btnclear').click(function (event) {
+                                    event.preventDefault();
+                                    $("#logslist").remove();
+                                });
+                            }
+
+                        } else if (response.status === "error") {
+                            console.log(response.message)
+                            console.log(response.message_additional)
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+
+            });
+
+            // Event handler for clicking the "Search" button
+            $('#search-btn').click(function (event) {
+                event.preventDefault();
+                M.Toast.dismissAll();
+                // serialize form data
+                var formData = $("#listrec").serializeArray();
+
+                console.log(JSON.stringify(formData));
+
+                // Perform AJAX request to fetch initial data
+                $.ajax({
+                    url: 'cgi-bin/s_search.o',
+                    type: 'POST',
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (response) {
+                        // Handle the response and display the initial data
+                        if ($('input[type="text"]').val() === '') {
+                            var toastHTML = '<i class="material-icons">search</i>&nbsp;<span> 0 record(s) was retrieved.</span>';
+                            M.toast({ html: toastHTML, classes: 'rounded' });
+
+                            // $("#logslist").remove();
+                        } else if (response.data.length === 0) {
+                            var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+                            M.toast({ html: toastHTML, classes: 'rounded' });
+
+                        } else {
+                            var template = Handlebars.compile($("#listitems").html());
+                            var html = template(response);
+
+                            $("#lstcontainer").html(html);
+
+                            var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+                            M.toast({ html: toastHTML, classes: 'rounded' });
+
+                            $('#btnclear').click(function (event) {
+                                event.preventDefault();
+                                $("#logslist").remove();
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+
+            });
+
+        }); 
+    </script>
+
+</body>
+
+</html>
