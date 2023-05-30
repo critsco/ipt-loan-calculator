@@ -1,0 +1,22 @@
+.selected-row td {
+  background-color: #f0f0f0;
+}
+
+.custom-container{
+  margin: auto;
+  /* text-align: center; */
+  width: 80%;
+}
+
+.custom-align {
+  text-align: center;
+}
+
+.section {
+  margin: auto;
+  width: 90%;
+}
+
+.custom-table {
+  border: 1px solid black;
+}
