@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="logo.ico">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+  <title>Teachers Information</title>
+</head>
+
+<body>
+  <nav style="font-family: 'Josefin Sans', sans-serif;background: #131949;">
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo center">School Information System</a>
+      <ul id="nav-mobile" class="left hide-on-med-and-down">
+        <li><a href="index.html">Students</a></li>
+        <li class="active"><a href="#">Teachers</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="custom-container">
+    <div>
+      <form id="listrec" method="post" autocomplete="off">
+        <div class="input-field">
+          <input type="text" name="name" id="name">
+          <label for="search">Name</label>
+        </div>
+        <button class="btn waves-effect waves-light btn-small" id="search-btn">Search</button>
+        <button class="btn waves-effect waves-light btn-small" id="show-all">Show All</button>
+        <button class="btn waves-effect waves-light btn-small" id="add-btn">Add</button>
+        <button class="btn waves-effect waves-light btn-small" id="edit-btn">Update</button>
+        <button class="btn waves-effect waves-light btn-small" id="del-btn">Delete</button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="row" id="lstcontainer">
+
+    </div>
+  </div>
+
+  <div id="add-modal" class="modal">
+    <div class="modal-content">
+      <h4>Add Teacher Info</h4>
+      <div class="row">
+        <form id="add-form" class="col 12 center-block">
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="ID" type="text" name="a_id" id="a_id">
+              <label for="a_id">ID</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Name" type="text" name="a_name" id="a_name">
+              <label for="a_name">Name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="Sex" type="text" name="a_sex" id="a_sex">
+              <label for="a_sex">Sex</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Contact #" type="text" name="a_contact" id="a_contact">
+              <label for="a_contact">Contact #</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="Address" type="text" name="a_address" id="a_address">
+              <label for="a_address">Address</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Department" type="text" name="a_dept" id="a_dept">
+              <label for="a_dept">Department</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn waves-effect waves-light" id="add">Add</button>
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+  </div>
+
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <h4>Edit Teacher Info</h4>
+      <div class="row">
+        <form id="edit-form" class="col 12 center-block">
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="ID" type="text" name="e_id" id="e_id">
+              <label for="e_id">ID</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Name" type="text" name="e_name" id="e_name">
+              <label for="e_name">Name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="Sex" type="text" name="e_sex" id="e_sex">
+              <label for="e_sex">Sex</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Contact #" type="text" name="e_contact" id="e_contact">
+              <label for="e_contact">Contact #</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="Address" type="text" name="e_address" id="e_address">
+              <label for="e_address">Address</label>
+            </div>
+            <div class="input-field col s6">
+              <input placeholder="Department" type="text" name="e_dept" id="e_dept">
+              <label for="e_dept">Department</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn waves-effect waves-light" id="update-btn">Save</button>
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+  </div>
+
+  <script id="listitems" type="text/x-handlebars-template">
+        <div id="logslist">
+            <table class="custom-table">
+                <tr>
+                    <th class="custom-align">ID</th>
+                    <th class="custom-align">Name</th>
+                    <th class="custom-align">Sex</th>
+                    <th class="custom-align">Contact #</th>
+                    <th class="custom-align">Address</th>
+                    <th class="custom-align">Department</th>
+                </tr>
+            {{#each data}}
+                    <tr class="selectable-row" onclick="selectRow(this)" style="cursor: pointer">
+                        <td class="custom-align">{{t_id}}</td>
+                        <td class="custom-align">{{t_name}}</td>
+                        <td class="custom-align">{{t_sex}}</td>
+                        <td class="custom-align">{{t_contact}}</td>
+                        <td class="custom-align">{{t_address}}</td>
+                        <td class="custom-align">{{t_dept}}</td>
+                    </tr>
+            {{/each}}
+        </table>
+            <br><a class="waves-effect waves-light btn-small" id="btnclear">clear</a>
+        </div>
+    </script>
+
+  <script>
+    var selectedRow;
+
+    function selectRow(row) {
+      // Remove 'selected-row' class from all rows
+      var rows = document.querySelectorAll('.selectable-row');
+      rows.forEach(function (row) {
+        row.classList.remove('selected-row');
+      });
+
+      // Add 'selected-row' class to the clicked row
+      if (row) {
+        row.classList.add('selected-row');
+        selectedRow = row;
+
+        var selectedText = row.querySelector('.selected-row td').textContent;
+
+        // Perform operations with the selected value
+        console.log('Selected row value:', selectedText);
+      } else {
+        // Reset the selectedRow variable if no row is selected
+        selectedRow = null;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('click', function (event) {
+        var target = event.target;
+
+        // Check if the click event target is inside the table or not
+        var isInsideTable = target.closest('table');
+
+        // If the click is outside the table, remove the selected row
+        if (!isInsideTable) {
+          selectRow(null);
+        } else {
+          // Handle the case when the click is inside the table
+          // Get the closest row element with the 'selectable-row' class
+          var row = target.closest('.selectable-row');
+
+          // Update the selectedRow variable with the current row
+          selectedRow = row;
+        }
+      });
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $('.modal').modal();
+
+      // Event handler for clicking the "Delete" button
+      $('#del-btn').click(function () {
+        event.preventDefault(); // Prevent the default form submission behavior
+        M.Toast.dismissAll();
+
+        var selectedText = $.trim($(selectedRow).find('.custom-align').eq(0).text());
+
+        if (selectedText === '') {
+          var template = Handlebars.compile($("#listitems").html());
+          // var html = template(response);
+
+          // $("#lstcontainer").html(html);
+
+          var toastHTML = '<i class="material-icons">error</i>&nbsp;<span> Nothing is selected.</span>';
+          M.toast({ html: toastHTML, classes: 'rounded' });
+
+          $('#btnclear').click(function (event) {
+            event.preventDefault();
+            $("#logslist").remove();
+          });
+        } else {
+          var rowData = [
+            { name: 'selectedRow', value: $(selectedRow).find('.custom-align').eq(0).text() }
+          ];
+
+          console.log(JSON.stringify(rowData));
+
+          // Perform AJAX request to fetch initial data
+          $.ajax({
+            url: 'cgi-bin/t_remove.o',
+            type: 'POST',
+            data: JSON.stringify(rowData),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (response) {
+              // Handle the response and display the initial data
+              if (response.status === "success") {
+                var formData = $("#listrec").serializeArray();
+
+                console.log(response.message)
+
+                // Perform AJAX request to fetch initial data
+                $.ajax({
+                  url: 'cgi-bin/t_show.o',
+                  type: 'POST',
+                  data: JSON.stringify(formData),
+                  contentType: 'application/json',
+                  dataType: 'json',
+                  success: function (response) {
+                    // Handle the response and display the initial data
+                    if (response.status === "success") {
+                      var template = Handlebars.compile($("#listitems").html());
+                      var html = template(response);
+
+                      $("#lstcontainer").html(html);
+
+                      var toastHTML = '<i class="material-icons">remove_circle</i>&nbsp;<span> Record was removed.</span>';
+                      M.toast({ html: toastHTML, classes: 'rounded' });
+
+                      $('#btnclear').click(function (event) {
+                        event.preventDefault();
+                        $("#logslist").remove();
+                      });
+
+                    } else if (response.status === "error") {
+                      console.log(response.message)
+                      console.log(response.message_additional)
+                    }
+                  },
+                  error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                  }
+                });
+
+              } else if (response.status === "error") {
+                console.log(response.message)
+                console.log(response.message_additional)
+              }
+            },
+            error: function (xhr, status, error) {
+              console.log(xhr.responseText);
+            }
+          });
+        }
+
+      });
+
+      // Event handler for clicking the "Add" button
+      $('#add-btn').click(function () {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Open the modal
+        $('#add-modal').modal('open');
+      });
+
+      $('#add').click(function (event) {
+        event.preventDefault();
+        M.Toast.dismissAll();
+
+        var addData = $("#add-form").serializeArray();
+
+        console.log(JSON.stringify(addData));
+
+        $.ajax({
+          url: 'cgi-bin/t_add.o',
+          type: 'POST',
+          data: JSON.stringify(addData),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function (response) {
+            // Handle the response and display the initial data
+
+            if (response.status === "success") {
+              // console.log(response.message)
+              // console.log(response)
+              var formData = $("#listrec").serializeArray();
+
+              console.log(response.message)
+
+              // Perform AJAX request to fetch initial data
+              $.ajax({
+                url: 'cgi-bin/t_show.o',
+                type: 'POST',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (response) {
+                  // Handle the response and display the initial data
+
+                  if (response.status === "success") {
+                    //console.log(response.message)
+                    //console.log(response)
+
+                    var template = Handlebars.compile($("#listitems").html());
+                    var html = template(response);
+
+                    $("#lstcontainer").html(html);
+
+                    var toastHTML = '<i class="material-icons">check</i>&nbsp;<span> Record was added.</span>';
+                    M.toast({ html: toastHTML, classes: 'rounded' });
+
+                    $('#btnclear').click(function (event) {
+                      event.preventDefault();
+                      $("#logslist").remove();
+                    });
+
+                  } else if (response.status === "error") {
+                    console.log(response.message)
+                    console.log(response.message_additional)
+                  }
+                },
+                error: function (xhr, status, error) {
+                  console.log(xhr.responseText);
+                }
+              });
+
+            } else if (response.status === "error") {
+              console.log(response.message)
+              console.log(response.message_additional)
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+          }
+        });
+      });
+
+      // Event handler for clicking the "Edit" button
+      $('#edit-btn').click(function () {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Get the selected student's ID
+        var selectedId = $(selectedRow).find('.custom-align').eq(0).text();
+        var selectedName = $(selectedRow).find('.custom-align').eq(1).text();
+        var selectedSex = $(selectedRow).find('.custom-align').eq(2).text();
+        var selectedContact = $(selectedRow).find('.custom-align').eq(3).text();
+        var selectedAddress = $(selectedRow).find('.custom-align').eq(4).text();
+        var selectedDept = $(selectedRow).find('.custom-align').eq(5).text();
+
+        // Populate the ID input field in the modal
+        $('#e_id').val(selectedId);
+        $('#e_name').val(selectedName);
+        $('#e_sex').val(selectedSex);
+        $('#e_contact').val(selectedContact);
+        $('#e_address').val(selectedAddress);
+        $('#e_dept').val(selectedDept);
+
+        // Open the modal
+        $('#edit-modal').modal('open');
+      });
+
+      $('#update-btn').click(function (event) {
+        event.preventDefault();
+        M.Toast.dismissAll();
+
+        var editData = $("#edit-form").serializeArray();
+
+        console.log(JSON.stringify(editData));
+
+        $.ajax({
+          url: 'cgi-bin/t_update.o',
+          type: 'POST',
+          data: JSON.stringify(editData),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function (response) {
+            // Handle the response and display the initial data
+
+            if (response.status === "success") {
+              // console.log(response.message)
+              // console.log(response)
+              var formData = $("#listrec").serializeArray();
+
+              console.log(response.message)
+
+              // Perform AJAX request to fetch initial data
+              $.ajax({
+                url: 'cgi-bin/t_show.o',
+                type: 'POST',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (response) {
+                  // Handle the response and display the initial data
+
+                  if (response.status === "success") {
+                    //console.log(response.message)
+                    //console.log(response)
+
+                    var template = Handlebars.compile($("#listitems").html());
+                    var html = template(response);
+
+                    $("#lstcontainer").html(html);
+
+                    var toastHTML = '<i class="material-icons">check</i>&nbsp;<span> Record was updated.</span>';
+                    M.toast({ html: toastHTML, classes: 'rounded' });
+
+                    $('#btnclear').click(function (event) {
+                      event.preventDefault();
+                      $("#logslist").remove();
+                    });
+
+                  } else if (response.status === "error") {
+                    console.log(response.message)
+                    console.log(response.message_additional)
+                  }
+                },
+                error: function (xhr, status, error) {
+                  console.log(xhr.responseText);
+                }
+              });
+
+            } else if (response.status === "error") {
+              console.log(response.message)
+              console.log(response.message_additional)
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+          }
+        });
+      });
+
+      // Event handler for clicking the "Show All" button
+      $('#show-all').click(function (event) {
+        event.preventDefault();
+        M.Toast.dismissAll();
+        // serialize form data
+        var formData = $("#listrec").serializeArray();
+
+        console.log(JSON.stringify(formData));
+
+        // Perform AJAX request to fetch initial data
+        $.ajax({
+          url: 'cgi-bin/t_show.o',
+          type: 'POST',
+          data: JSON.stringify(formData),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function (response) {
+            // Handle the response and display the initial data
+
+            if (response.status === "success") {
+              //console.log(response.message)
+              //console.log(response)
+              if (response.data === "") {
+                var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+                M.toast({ html: toastHTML, classes: 'rounded' });
+              } else {
+                var template = Handlebars.compile($("#listitems").html());
+                var html = template(response);
+
+                $("#lstcontainer").html(html);
+
+                var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+                M.toast({ html: toastHTML, classes: 'rounded' });
+
+                $('#btnclear').click(function (event) {
+                  event.preventDefault();
+                  $("#logslist").remove();
+                });
+              }
+
+            } else if (response.status === "error") {
+              console.log(response.message)
+              console.log(response.message_additional)
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+          }
+        });
+
+      });
+
+      // Event handler for clicking the "Search" button
+      $('#search-btn').click(function (event) {
+        event.preventDefault();
+        M.Toast.dismissAll();
+        // serialize form data
+        var formData = $("#listrec").serializeArray();
+
+        console.log(JSON.stringify(formData));
+
+        // Perform AJAX request to fetch initial data
+        $.ajax({
+          url: 'cgi-bin/t_search.o',
+          type: 'POST',
+          data: JSON.stringify(formData),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function (response) {
+            // Handle the response and display the initial data
+            if ($('input[type="text"]').val() === '') {
+              var toastHTML = '<i class="material-icons">search</i>&nbsp;<span> 0 record(s) was retrieved.</span>';
+              M.toast({ html: toastHTML, classes: 'rounded' });
+
+              // $("#logslist").remove();
+            } else if (response.data.length === 0) {
+              var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+              M.toast({ html: toastHTML, classes: 'rounded' });
+
+            } else {
+              var template = Handlebars.compile($("#listitems").html());
+              var html = template(response);
+
+              $("#lstcontainer").html(html);
+
+              var toastHTML = '<i class="material-icons">search</i>&nbsp;<span>' + response.data.length + ' record(s) was retrieved.</span>';
+              M.toast({ html: toastHTML, classes: 'rounded' });
+
+              $('#btnclear').click(function (event) {
+                event.preventDefault();
+                $("#logslist").remove();
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+          }
+        });
+
+      });
+
+    }); 
+  </script>
+
+</body>
+
+</html>
